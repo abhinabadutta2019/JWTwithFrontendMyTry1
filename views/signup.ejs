@@ -1,10 +1,12 @@
 <%- include('partials/header'); -%>
 
-<form action="/signup">
+<form>
   <h2>Sign up</h2>
+  <!-- email -->
   <label for="email">Email</label>
   <input type="text" name="email" required />
   <div class="email error"></div>
+  <!--  -->
   <label for="password">Password</label>
   <input type="password" name="password" required />
   <div class="password error"></div>
@@ -35,9 +37,9 @@
       const data = await res.json();
       console.log(data);
       //if success then redirect to ('/')-homepage
-      // if (data.user) {
-      //   location.assign("/");
-      // }
+      if (data.user) {
+        location.assign("/");
+      }
     } catch (err) {
       console.log(err);
     }

@@ -15,12 +15,12 @@ router.get("/signup", (req, res) => {
 router.get("/login", (req, res) => {
   res.render("login.ejs");
 });
-//
+//signup post route
 router.post("/signup", async (req, res) => {
   try {
     const user = await User.create({
       email: req.body.email,
-      password: req.body.email,
+      password: req.body.password,
     });
     //user theke user._id- token creation er jonno lagche
     const token = createToken(user._id); //createToken() function called here--created on line 7
@@ -32,16 +32,33 @@ router.post("/signup", async (req, res) => {
     // res.json(user);
   } catch (err) {
     console.log(err);
-    res.send(400).send("error, user not created");
+    res.status(400).json({});
   }
 });
-//
-router.post("/login", (req, res) => {
-  console.log(req.body);
-  console.log(req.body.email);
-  console.log(req.body.password);
 
-  res.send("user login1");
+//login post route
+router.post("/login", async (req, res) => {
+  const email = req.query.email;
+  const password = req.query.password;
+  try {
+    const user = await User.login(email, password);
+    console.log(user);
+    //create jwt token
+    const token = createToken(user._id);
+    //create cookie
+    res.cookie("jwt", token);
+    res.send();
+  } catch (err) {
+    res.status(400).json({});
+  }
+});
+
+//
+//logout
+router.get("/logout", async (req, res) => {
+  //resetting the value of token to '' empty string
+  res.cookie("jwt", "", { maxAge: 1 }); //maxAge of the value is 1 mili second
+  res.redirect("/");
 });
 //
 module.exports = router;

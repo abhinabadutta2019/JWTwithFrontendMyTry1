@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -24,10 +24,29 @@ const userSchema = new mongoose.Schema({
 
 // fire a function before doc saved to db
 userSchema.pre("save", async function (next) {
-  const salt = await bcrypt.genSalt();
-  this.password = await bcrypt.hash(this.password, salt);
+  this.password = await bcrypt.hash(this.password, 1);
+  console.log(this.password);
   next();
 });
+
+//static method to login user
+
+userSchema.statics.login = async function (email, password) {
+  const user = await User.findOne({ email: email });
+  if (user) {
+    const auth = await bcrypt.compare(password, user.password);
+    if (auth) {
+      console.log(auth, "bcrypt.compare is true");
+      return user;
+    }
+
+    if (auth === false) {
+      console.log(auth, "bcrypt.compare is false");
+    }
+    // throw Error("incorrect password");
+  }
+  //   throw Error("incorrect email");
+};
 
 const User = mongoose.model("user", userSchema);
 

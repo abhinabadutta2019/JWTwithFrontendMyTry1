@@ -1,28 +1,39 @@
 <%- include('partials/header'); -%>
 
-<form action="/signup">
+<form>
   <h2>Login</h2>
+  <!-- email -->
   <label for="email">Email</label>
   <input type="text" name="email" required />
-  <div class="email error">some error</div>
+  <div class="email error"></div>
+  <!--  -->
   <label for="password">Password</label>
   <input type="password" name="password" required />
   <div class="password error"></div>
-  <button>login</button>
 </form>
+<button type="submit" onclick="onLogin()">submit</button>
 
 <%- include('partials/footer'); -%>
 
 <script>
+  //
   const form = document.querySelector("form");
+  //
+  function onLogin() {
+    console.log("hi-1");
 
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    // get values
+    // get values- form giving the value
     const email = form.email.value;
     const password = form.password.value;
+    // console.log(email, password);
 
-    console.log(email, password);
-  });
+    const res = fetch(`/login?email=${email}&password=${password}`, {
+      method: "POST",
+    }).then((response) => {
+      console.log("Hi1");
+
+      // location.reload();
+      location.assign("/");
+    });
+  }
 </script>
